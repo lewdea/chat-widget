@@ -1,0 +1,23 @@
+{
+  "name": "chat-widget",
+  "version": "1.0.0",
+  "description": "<img src=\"https://user-images.githubusercontent.com/1721988/234579578-398aab55-9336-4a20-aa62-319cf1bf4a99.png\" height=\"80\" width=\"auto\">",
+  "main": "chat-widget.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lewdea/chat-widget.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lewdea/chat-widget/issues"
+  },
+  "homepage": "https://github.com/lewdea/chat-widget#readme",
+  "devDependencies": {
+    "terser": "^5.21.0",
+    "uglify": "^0.1.5"
+  }
+}
