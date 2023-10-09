@@ -3,7 +3,7 @@
   document.head.insertAdjacentHTML('beforeend', '<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">');
 
   // GPT config
-  const API_KEY = "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";
+  const API_KEY = "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";
   const APU_URL = "https://api.openai.com/v1/completions";
 
   const REQUEST_HEADER = {
@@ -31,7 +31,7 @@
   }
   #chat-widget-container {
     position: fixed;
-    bottom: 20px;
+    bottom: 70px;
     right: 20px;
     flex-direction: column;
   }
@@ -72,7 +72,7 @@
     </div>
     <div id="chat-popup" class="hidden absolute bottom-20 right-0 w-96 bg-white rounded-md shadow-md flex flex-col transition-all text-sm">
       <div id="chat-header" class="flex justify-between items-center p-4 text-white rounded-t-md" style="background: #20bec8">
-        <h3 class="m-0 text-lg">Wisdom Assistant</h3>
+        <h3 class="m-0 text-lg" style="color: white">Wisdom Assistant</h3>
         <button id="close-popup" class="bg-transparent border-none text-white cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -93,7 +93,7 @@
           </button>
         </div>
         <div class="flex text-center text-xs pt-4">
-          <span class="flex-1">Sopported by <a href="https://openai.com" target="_blank" class="text-indigo-600">@OpenAI</a></span>
+          <span class="flex-1">Supported by <a href="https://openai.com" target="_blank" class="text-indigo-600">@OpenAI</a></span>
         </div>
       </div>
     </div>
