@@ -1,15 +1,5 @@
 (function() {
-  // GPT config
-  const API_KEY = "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";
-  const APU_URL = "https://api.openai.com/v1/chat/completions";
-
-  const REQUEST_HEADER = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${API_KEY}`
-  };
-
   const REQUEST_PAYLOAD = {
-    "model": "gpt-3.5-turbo",
     "messages": [
       {
         "role": "system",
@@ -203,16 +193,27 @@
 
     axios({
       method: 'post',
-      url: APU_URL,
+      url: "http://localhost:3000/completion",
       data: REQUEST_PAYLOAD,
-      headers: REQUEST_HEADER
     }).then(function(response) {
-      REQUEST_PAYLOAD.messages.push(response.data.choices[0].message);
-      reply(response.data.choices[0].message.content)
+      console.log(response)
     }).catch(function() {
       reply("Error. Retry later.")
     })
     .finally(function() { buttonSwitch(false) });
+
+    // axios({
+    //   method: 'post',
+    //   url: APU_URL,
+    //   data: REQUEST_PAYLOAD,
+    //   headers: REQUEST_HEADER
+    // }).then(function(response) {
+    //   REQUEST_PAYLOAD.messages.push(response.data.choices[0].message);
+    //   reply(response.data.choices[0].message.content)
+    // }).catch(function() {
+    //   reply("Error. Retry later.")
+    // })
+    // .finally(function() { buttonSwitch(false) });
   }
 
 
