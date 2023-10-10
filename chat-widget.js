@@ -3,8 +3,8 @@
   document.head.insertAdjacentHTML('beforeend', '<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">');
 
   // GPT config
-  const API_KEY = "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";
-  const APU_URL = "https://api.openai.com/v1/completions";
+  const API_KEY = "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";
+  const APU_URL = "https://api.openai.com/v1/chat/completions";
 
   const REQUEST_HEADER = {
     "Content-Type": "application/json",
@@ -12,10 +12,13 @@
   };
 
   const REQUEST_PAYLOAD = {
-    "model": "gpt-3.5-turbo-instruct",
-    "prompt": "",
-    "max_tokens": 4000,
-    "temperature": 0
+    "model": "gpt-3.5-turbo",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant."
+      }
+    ]
   };
 
   // Inject Script
@@ -108,11 +111,13 @@
   const closePopup = document.getElementById('close-popup');
   const buttonText = document.getElementById('button-text');
   const loadingIcon = document.getElementById('loading');
+  let loading = false;
+
 
   chatSubmit.addEventListener('click', function() {
     
     const message = chatInput.value.trim();
-    if (!message) return;
+    if (!message || loading) return;
     
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -145,7 +150,7 @@
     const messageElement = document.createElement('div');
     messageElement.className = 'flex justify-end mb-3';
     messageElement.innerHTML = `
-      <div class="bg-gray-800 text-white rounded-lg py-2 px-4 max-w-[70%]">
+      <div class="text-white rounded-lg py-2 px-4 max-w-[70%]" style="background: #20bec8">
         ${message}
       </div>
     `;
@@ -173,14 +178,21 @@
 
   function send(message) {
     buttonSwitch(true);
-    REQUEST_PAYLOAD["prompt"] = message;
+
+    const userMsg = {
+      role: "user",
+      content: message
+    };
+    REQUEST_PAYLOAD.messages.push(userMsg);
+
     axios({
       method: 'post',
       url: APU_URL,
       data: REQUEST_PAYLOAD,
       headers: REQUEST_HEADER
     }).then(function(response) {
-      reply(response.data.choices[0].text)
+      REQUEST_PAYLOAD.messages.push(response.data.choices[0].message);
+      reply(response.data.choices[0].message.content)
     }).catch(function() {
       reply("Error. Retry later.")
     })
@@ -188,7 +200,8 @@
   }
 
 
-  function buttonSwitch(loading) {
+  function buttonSwitch(status) {
+    loading = status
     if (loading) {
       buttonText.style.display = "none";
       loadingIcon.style.display = "inline";
