@@ -193,27 +193,15 @@
 
     axios({
       method: 'post',
-      url: "http://localhost:3000/completion",
+      url: window.chatServer || "https://chat-server-kjvx11h1h-lu-dis-projects.vercel.app/api/completion",
       data: REQUEST_PAYLOAD,
     }).then(function(response) {
-      console.log(response)
+      REQUEST_PAYLOAD.messages.push(response.data.choices[0].message);
+      reply(response.data.choices[0].message.content);
     }).catch(function() {
       reply("Error. Retry later.")
     })
     .finally(function() { buttonSwitch(false) });
-
-    // axios({
-    //   method: 'post',
-    //   url: APU_URL,
-    //   data: REQUEST_PAYLOAD,
-    //   headers: REQUEST_HEADER
-    // }).then(function(response) {
-    //   REQUEST_PAYLOAD.messages.push(response.data.choices[0].message);
-    //   reply(response.data.choices[0].message.content)
-    // }).catch(function() {
-    //   reply("Error. Retry later.")
-    // })
-    // .finally(function() { buttonSwitch(false) });
   }
 
 
