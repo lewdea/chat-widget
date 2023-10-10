@@ -1,7 +1,4 @@
 (function() {
-  // Inject basic style framework
-  document.head.insertAdjacentHTML('beforeend', '<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">');
-
   // GPT config
   const API_KEY = "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";
   const APU_URL = "https://api.openai.com/v1/chat/completions";
@@ -29,14 +26,28 @@
   // Inject the CSS
   const style = document.createElement('style');
   style.innerHTML = `
-  .hidden {
+  .chat_flex {
+    display: flex;
+  }
+  .chat_hidden {
     display: none;
+  }
+  .chat_shadow {
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  }
+  .chat_msg {
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
+  .res_msg {
+    margin-bottom: 0.75rem;
   }
   #chat-widget-container {
     position: fixed;
     bottom: 70px;
     right: 20px;
     flex-direction: column;
+    font-family: ui-sans-serif, system-ui;
   }
   #chat-popup {
     height: 60vh;
@@ -68,35 +79,40 @@
   
   // Inject the HTML
   chatWidgetContainer.innerHTML = `
-    <div id="chat-bubble" class="w-12 h-12 rounded-full flex items-center justify-center cursor-pointer text-3xl" style="background: #20bec8">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <div id="chat-bubble" style="background: #20bec8; font-size: 1.875rem; line-height: 2.25rem; border-radius: 9999px; 
+        justify-content: center; align-items: center; cursor: pointer; width: 3rem; height: 3rem; display: flex;">
+      <svg xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; height: 1.5rem; display: block; vertical-align: middle; color: white;"  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
     </div>
-    <div id="chat-popup" class="hidden absolute bottom-20 right-0 w-96 bg-white rounded-md shadow-md flex flex-col transition-all text-sm">
-      <div id="chat-header" class="flex justify-between items-center p-4 text-white rounded-t-md" style="background: #20bec8">
-        <h3 class="m-0 text-lg" style="color: white">Wisdom Assistant</h3>
-        <button id="close-popup" class="bg-transparent border-none text-white cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <div id="chat-popup" style="height: 60vh; max-height: 60vh; transition: all 0.3s; overflow: hidden; font-size: .875rem;
+        line-height: 1.25rem; background-color: white; border-radius: 0.375rem; flex-direction: column; width: 24rem;
+         bottom: 5rem; right: 0; position: absolute;"
+        class="chat_hidden chat_shadow chat_flex">
+      <div id="chat-header" class="chat_flex" 
+        style="background: #20bec8; color: white; padding: 1rem; border-top-left-radius: 0.375rem; border-top-right-radius: 0.375rem;
+        justify-content: space-between; align-items: center;">
+        <h3 style="color: white; font-size: 1.125rem; line-height: 1.75rem; margin: 0;">Wisdom Assistant</h3>
+        <button id="close-popup" style="color: white; background-color: transparent; border-style: none; cursor: pointer;">
+          <svg xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; height: 1.5rem; display: block; vertical-align: middle;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
-      <div id="chat-messages" class="flex-1 p-4 overflow-y-auto"></div>
-      <div id="chat-input-container" class="p-4 border-t border-gray-200">
-        <div class="flex space-x-4 items-center">
-          <input type="text" id="chat-input" class="flex-1 border border-gray-300 rounded-md px-4 py-2 outline-none w-3/4" placeholder="Type your message...">
-          <button id="chat-submit" class="text-white rounded-md px-4 py-2 cursor-pointer" style="background: #20bec8">
+      <div id="chat-messages" style="padding: 1rem; overflow-y: auto; flex: 1 1 0%;"></div>
+      <div id="chat-input-container" style="padding: 1rem; border-top: 1px solid rgba(229,231,235,1);">
+        <div style="align-items: center;" 
+            class="chat_flex space-x-4">
+          <input type="text" id="chat-input" style="outline: 1px solid transparent; border-color: grey; ;
+          padding: 0.5rem 1rem 0.5rem 1rem; border-width: 1px; border-radius: 0.375rem; flex: 1 1 0%; width: 75%; margin-right: 2rem;"
+            placeholder="Type your message...">
+          <button id="chat-submit" style="width:4rem; height: 2.1rem; background: #20bec8; color: white; text-align: center; border-radius: 0.375rem; cursor: pointer; border: none;">
             <i id="button-text" style="font-style: normal">Send</i>
-            <i id="loading"  style="display: none">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-              </svg>
-            </i>
+            <i id="loading"  style="display: none; ">Sending</i>
           </button>
         </div>
-        <div class="flex text-center text-xs pt-4">
-          <span class="flex-1">Supported by <a href="https://openai.com" target="_blank" class="text-indigo-600">@OpenAI</a></span>
+        <div style="font-size: .75rem;line-height: 1rem;text-align: center;padding-top: 1rem;" class="chat_flex">
+          <span style="flex: 1 1 0%;">Supported by <a href="https://openai.com" target="_blank" class="text-indigo-600">@OpenAI</a></span>
         </div>
       </div>
     </div>
@@ -148,9 +164,9 @@
   
     // Display user message
     const messageElement = document.createElement('div');
-    messageElement.className = 'flex justify-end mb-3';
+    messageElement.className = 'chat_flex chat_msg';
     messageElement.innerHTML = `
-      <div class="text-white rounded-lg py-2 px-4 max-w-[70%]" style="background: #20bec8">
+      <div style="background: #20bec8; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem;">
         ${message}
       </div>
     `;
@@ -166,9 +182,9 @@
   function reply(message) {
     const chatMessages = document.getElementById('chat-messages');
     const replyElement = document.createElement('div');
-    replyElement.className = 'flex mb-3';
+    replyElement.className = 'chat_flex res_msg';
     replyElement.innerHTML = `
-      <div class="bg-gray-200 text-black rounded-lg py-2 px-4 max-w-[70%]">
+      <div class="bg-gray-200 text-black rounded-lg py-2 px-4 max-w-[70%]" style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem;">
         ${message}
       </div>
     `;
@@ -214,8 +230,8 @@
 
   function togglePopup() {
     const chatPopup = document.getElementById('chat-popup');
-    chatPopup.classList.toggle('hidden');
-    if (!chatPopup.classList.contains('hidden')) {
+    chatPopup.classList.toggle('chat_hidden');
+    if (!chatPopup.classList.contains('chat_hidden')) {
       document.getElementById('chat-input').focus();
     }
   }  
