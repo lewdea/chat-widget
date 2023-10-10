@@ -3,7 +3,7 @@
   document.head.insertAdjacentHTML('beforeend', '<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">');
 
   // GPT config
-  const API_KEY = "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";
+  const API_KEY = "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";
   const APU_URL = "https://api.openai.com/v1/completions";
 
   const REQUEST_HEADER = {
@@ -36,8 +36,8 @@
     flex-direction: column;
   }
   #chat-popup {
-    height: 70vh;
-    max-height: 70vh;
+    height: 60vh;
+    max-height: 60vh;
     transition: all 0.3s;
     overflow: hidden;
   }
