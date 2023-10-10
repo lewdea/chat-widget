@@ -3,7 +3,7 @@
   document.head.insertAdjacentHTML('beforeend', '<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">');
 
   // GPT config
-  const API_KEY = "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";
+  const API_KEY = "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";
   const APU_URL = "https://api.openai.com/v1/chat/completions";
 
   const REQUEST_HEADER = {
