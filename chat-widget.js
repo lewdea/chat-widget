@@ -193,7 +193,7 @@
 
     axios({
       method: 'post',
-      url: window.chatServer || "https://chat-server-kjvx11h1h-lu-dis-projects.vercel.app/api/completion",
+      url: window.chatServer || "https://chat-server-gray.vercel.app/api/completion",
       data: REQUEST_PAYLOAD,
     }).then(function(response) {
       REQUEST_PAYLOAD.messages.push(response.data.choices[0].message);
