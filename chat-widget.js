@@ -174,7 +174,7 @@
     const replyElement = document.createElement('div');
     replyElement.className = 'chat_flex res_msg';
     replyElement.innerHTML = `
-      <div class="bg-gray-200 text-black rounded-lg py-2 px-4 max-w-[70%]" style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem;">
+      <div style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem; text-align: start;">
         ${message}
       </div>
     `;
