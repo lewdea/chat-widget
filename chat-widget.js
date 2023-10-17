@@ -3,9 +3,16 @@
     "messages": [
       {
         "role": "system",
-        "content": "You are a helpful assistant."
+        "content": "你是一個智慧助手"
       }
     ]
+  };
+  window.chatCourseName = "大學英語";
+  const PROMPT_TEMPLATE = {
+    "intro": `你是一位的<${window.chatCourseName}>老師，現在我要寫一份課程介紹。請直接幫我寫出500字的課程簡介，以及500字的教學目標。`,
+    "outline": `你是一位<${window.chatCourseName}>老師，現在我要寫一份課程大綱。請你依序問我以下2個問題，然後直接幫我撰寫章節主題、教學目標，以及教學內容。1. 周數。2. 每周幾節課。`,
+    "quiz": `你是一位<${window.chatCourseName}>老師，現在我要出考題。請你依序問我以下4個問題，然後直接幫我寫出考題。1. 考試主題。2. 題目數量。3.難易度。4.題型：是非題、單選題、複選題、簡答題。`,
+    "homework": `你是一位的<${window.chatCourseName}>老師，現在我要出作業。請直接幫我出3份作業主題，內容包含作業主題、作業描述。`
   };
 
   // Inject Script
@@ -32,6 +39,20 @@
   .res_msg {
     margin-bottom: 0.75rem;
   }
+  .function {
+    width: 100px; 
+    height: 20px; 
+    line-height: 20px; 
+    border: 1px solid #20bec8; 
+    border-radius: 4px; 
+    margin: 10px 10px; 
+    font-size: 13px;
+  }
+  .function:hover {
+    color: white;
+    background: #20bec8;
+    cursor: pointer; 
+  }
   #chat-widget-container {
     position: fixed;
     bottom: 70px;
@@ -40,8 +61,8 @@
     font-family: ui-sans-serif, system-ui;
   }
   #chat-popup {
-    height: 60vh;
-    max-height: 60vh;
+    height: 80vh;
+    max-height: 80vh;
     transition: all 0.3s;
     overflow: hidden;
   }
@@ -75,19 +96,28 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
     </div>
-    <div id="chat-popup" style="height: 60vh; max-height: 60vh; transition: all 0.3s; overflow: hidden; font-size: .875rem;
+    <div id="chat-popup" style="height: 70vh; max-height: 70vh; transition: all 0.3s; overflow: hidden; font-size: .875rem;
         line-height: 1.25rem; background-color: white; border-radius: 0.375rem; flex-direction: column; width: 24rem;
          bottom: 5rem; right: 0; position: absolute;"
         class="chat_hidden chat_shadow chat_flex">
       <div id="chat-header" class="chat_flex" 
         style="background: #20bec8; color: white; padding: 1rem; border-top-left-radius: 0.375rem; border-top-right-radius: 0.375rem;
         justify-content: space-between; align-items: center;">
-        <h3 style="color: white; font-size: 1.125rem; line-height: 1.75rem; margin: 0;">Wisdom Assistant</h3>
+        <h3 style="color: white; font-size: 1.125rem; line-height: 1.75rem; margin: 0;">課程助理</h3>
         <button id="close-popup" style="color: white; background-color: transparent; border-style: none; cursor: pointer;">
           <svg xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; height: 1.5rem; display: block; vertical-align: middle;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
+      </div>
+      <div style="height: 10vh; border-bottom: 1px solid rgba(128, 128, 128, .3); margin: 0 10px;">
+        <div style="color: grey; font-size: 12px; padding-top: 10px;">請選擇助理服務，当前课程'<i id="course"></i>'</div>
+        <div style="display: flex; justify-content: center; ">
+            <div class="function" id="intro-func">課程介紹</div>
+            <div class="function" id="outline-func">課程大綱</div>
+            <div class="function" id="quiz-func">出考題</div>
+            <div class="function" id="homework-func">出作業</div>
+        </div>
       </div>
       <div id="chat-messages" style="padding: 1rem; overflow-y: auto; flex: 1 1 0%;"></div>
       <div id="chat-input-container" style="padding: 1rem; border-top: 1px solid rgba(229,231,235,1);">
@@ -115,11 +145,16 @@
   const chatBubble = document.getElementById('chat-bubble');
   const chatPopup = document.getElementById('chat-popup');
   const closePopup = document.getElementById('close-popup');
+  const introFunc = document.getElementById('intro-func');
+  const outlineFunc = document.getElementById('outline-func');
+  const quizFunc = document.getElementById('quiz-func');
+  const homeworkFunc = document.getElementById('homework-func');
   const buttonText = document.getElementById('button-text');
+  const course = document.getElementById("course");
   const loadingIcon = document.getElementById('loading');
   let loading = false;
 
-
+  course.innerHTML = window.chatCourseName || "";
   chatSubmit.addEventListener('click', function() {
     
     const message = chatInput.value.trim();
@@ -147,6 +182,19 @@
     togglePopup();
   });
 
+  introFunc.addEventListener('click', function() {
+    send(PROMPT_TEMPLATE["intro"]);
+  });
+  outlineFunc.addEventListener('click', function() {
+    send(PROMPT_TEMPLATE["outline"]);
+  });
+  quizFunc.addEventListener('click', function() {
+    send(PROMPT_TEMPLATE["quiz"]);
+  });
+  homeworkFunc.addEventListener('click', function() {
+    send(PROMPT_TEMPLATE["homework"]);
+  });
+
 
   function onUserRequest(message) {
     // Handle user request here
@@ -156,7 +204,7 @@
     const messageElement = document.createElement('div');
     messageElement.className = 'chat_flex chat_msg';
     messageElement.innerHTML = `
-      <div style="background: #20bec8; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem;">
+      <div style="background: #20bec8; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; text-align: start;">
         ${message}
       </div>
     `;
@@ -173,11 +221,8 @@
     const chatMessages = document.getElementById('chat-messages');
     const replyElement = document.createElement('div');
     replyElement.className = 'chat_flex res_msg';
-    replyElement.innerHTML = `
-      <div style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem; text-align: start;">
-        ${message}
-      </div>
-    `;
+    const innerHTML = `<div style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem; text-align: start; display: block;">${message.replaceAll("\n", "<br/>")}</div>`;
+    replyElement.innerHTML = innerHTML;
     chatMessages.appendChild(replyElement);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
@@ -199,6 +244,7 @@
       REQUEST_PAYLOAD.messages.push(response.data.choices[0].message);
       reply(response.data.choices[0].message.content);
     }).catch(function() {
+      REQUEST_PAYLOAD.messages.pop();
       reply("Error. Retry later.")
     })
     .finally(function() { buttonSwitch(false) });
