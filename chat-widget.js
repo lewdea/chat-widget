@@ -111,7 +111,7 @@
         </button>
       </div>
       <div style="height: 10vh; border-bottom: 1px solid rgba(128, 128, 128, .3); margin: 0 10px;">
-        <div style="color: grey; font-size: 12px; padding-top: 10px;">請選擇助理服務，當前課程《<i id="course"></i>》</div>
+        <div style="color: grey; font-size: 12px; padding-top: 10px;">請選擇助理服務，當前課程《<i id="chatCourseName"></i>》</div>
         <div style="display: flex; justify-content: center; ">
             <div class="function" id="intro-func">課程介紹</div>
             <div class="function" id="outline-func">課程大綱</div>
@@ -150,11 +150,11 @@
   const quizFunc = document.getElementById('quiz-func');
   const homeworkFunc = document.getElementById('homework-func');
   const buttonText = document.getElementById('button-text');
-  const course = document.getElementById("course");
+  const chatCourseName = document.getElementById("course");
   const loadingIcon = document.getElementById('loading');
   let loading = false;
 
-  course.innerHTML = window.chatCourseName || "";
+  chatCourseName.innerHTML = window.chatCourseName || "";
   chatSubmit.addEventListener('click', function() {
     
     const message = chatInput.value.trim();
