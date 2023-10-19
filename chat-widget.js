@@ -42,11 +42,12 @@
   .function {
     width: 100px; 
     height: 20px; 
-    line-height: 20px; 
+    line-height: 18px; 
     border: 1px solid #20bec8; 
     border-radius: 4px; 
     margin: 10px 10px; 
     font-size: 13px;
+    text-align: center;
   }
   .function:hover {
     color: white;
@@ -126,7 +127,8 @@
           <input type="text" id="chat-input" style="outline: 1px solid transparent; border-color: grey; ;
           padding: 0.5rem 1rem 0.5rem 1rem; border-width: 1px; border-radius: 0.375rem; flex: 1 1 0%; width: 75%; margin-right: 2rem;"
             placeholder="Type your message...">
-          <button id="chat-submit" style="font-size: 13px; width:4rem; height: 2.1rem; background: #20bec8; color: white; text-align: center; border-radius: 0.375rem; cursor: pointer; border: none;">
+          <button id="chat-submit" style="font-size: 13px; width:4rem; height: 2.1rem; background: #20bec8; color: white; 
+          text-align: center; border-radius: 0.375rem; cursor: pointer; border: none; padding: 0;">
             <i id="button-text" style="font-style: normal">Send</i>
             <i id="loading"  style="display: none; ">Sending</i>
           </button>
