@@ -7,7 +7,7 @@
       }
     ]
   };
-  window.chatCourseName = "大學英語";
+
   const PROMPT_TEMPLATE = {
     "intro": `你是一位的<${window.chatCourseName}>老師，現在我要寫一份課程介紹。請直接幫我寫出500字的課程簡介，以及500字的教學目標。`,
     "outline": `你是一位<${window.chatCourseName}>老師，現在我要寫一份課程大綱。請你依序問我以下2個問題，然後直接幫我撰寫章節主題、教學目標，以及教學內容。1. 周數。2. 每周幾節課。`,
