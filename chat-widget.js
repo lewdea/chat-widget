@@ -261,6 +261,7 @@
 
     const msgId = `msg_${Date.now()}`;
     reply("", msgId);
+    buttonSwitch(true);
     try {
       const response = await fetch(window.chatServer || "https://next-chat-server-ten.vercel.app/api/chat", {
           method: "POST",
@@ -269,7 +270,7 @@
           },
           body: JSON.stringify(REQUEST_PAYLOAD),
       });
-      buttonSwitch(true);
+      
       async function streamToString(body) {
           const reader = body?.pipeThrough(new TextDecoderStream()).getReader();
           
