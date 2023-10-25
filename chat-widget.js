@@ -51,10 +51,11 @@
     cursor: pointer; 
   }
   .blink {
+    display: inline-block;
     width: 5px;
-    height: 20px;
-    margin: 8px -13px;
-    background-color: black;
+    height: 10px;
+    margin-left: 5px;
+    background: black;
     animation: blink 0.5s linear infinite;
   }
 
@@ -238,16 +239,14 @@
     if (MESSAGE_IDS.indexOf(id) == -1) {
       const chatMessages = document.getElementById('chat-messages');
       const replyElement = document.createElement('div');
-      replyElement.id = id;
       replyElement.className = 'chat_flex res_msg';
-      const innerHTML = `<div style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem; text-align: start; display: block;">${message}</div><div class="blink"></div>`;
+      const innerHTML = `<div style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem; text-align: start; display: block;"><span id=${id}>${message}</span><span class="blink"></span></div>`;
       replyElement.innerHTML = innerHTML;
       chatMessages.appendChild(replyElement);
       MESSAGE_IDS.push(id);
     } else {
-      const replyElement = document.getElementById(id);
-      const innerMsg = replyElement.firstChild;
-      innerMsg.innerHTML = innerMsg.innerHTML + message;
+      const replyText = document.getElementById(id);
+      replyText.innerHTML = replyText.innerHTML + message;
     }
     
     chatMessages.scrollTop = chatMessages.scrollHeight;
