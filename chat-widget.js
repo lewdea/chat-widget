@@ -7,6 +7,7 @@
       }
     ]
   };
+  const MESSAGE_IDS = [];
 
   const PROMPT_TEMPLATE = {
     "intro": `你是一位的<${window.chatCourseName}>老師，現在我要寫一份課程介紹。請直接幫我寫出500字的課程簡介，以及500字的教學目標。`,
@@ -14,11 +15,6 @@
     "quiz": `你是一位<${window.chatCourseName}>老師，現在我要出考題。請你依序問我以下4個問題，然後直接幫我寫出考題。1. 考試主題。2. 題目數量。3.難易度。4.題型：是非題、單選題、複選題、簡答題。`,
     "homework": `你是一位的<${window.chatCourseName}>老師，現在我要出作業。請直接幫我出3份作業主題，內容包含作業主題、作業描述。`
   };
-
-  // Inject Script
-  const script = document.createElement('script');
-  script.src = "https://cdn.bootcdn.net/ajax/libs/axios/1.5.0/axios.js";
-  document.head.appendChild(script);
 
   // Inject the CSS
   const style = document.createElement('style');
@@ -54,6 +50,23 @@
     background: #20bec8;
     cursor: pointer; 
   }
+  .blink {
+    width: 5px;
+    height: 20px;
+    margin: 8px -13px;
+    background-color: black;
+    animation: blink 0.5s linear infinite;
+  }
+
+  @keyframes blink {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
   #chat-widget-container {
     position: fixed;
     bottom: 70px;
@@ -130,7 +143,7 @@
           <button id="chat-submit" style="font-size: 13px; width:4rem; height: 2.1rem; background: #20bec8; color: white; 
           text-align: center; border-radius: 0.375rem; cursor: pointer; border: none; padding: 0;">
             <i id="button-text" style="font-style: normal">Send</i>
-            <i id="loading"  style="display: none; ">Sending</i>
+            <i id="loading"  style="display: none; ">···</i>
           </button>
         </div>
         <div style="font-size: .75rem;line-height: 1rem;text-align: center;padding-top: 1rem;" class="chat_flex">
@@ -219,48 +232,84 @@
   }
 
   
-  function reply(message) {
-    const chatMessages = document.getElementById('chat-messages');
-    const replyElement = document.createElement('div');
-    replyElement.className = 'chat_flex res_msg';
-    const innerHTML = `<div style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem; text-align: start; display: block;">${message.replaceAll("\n", "<br/>")}</div>`;
-    replyElement.innerHTML = innerHTML;
-    chatMessages.appendChild(replyElement);
+  function reply(message, id) {
+    message = message.replaceAll("\n", "<br/>");
+    
+    if (MESSAGE_IDS.indexOf(id) == -1) {
+      const chatMessages = document.getElementById('chat-messages');
+      const replyElement = document.createElement('div');
+      replyElement.id = id;
+      replyElement.className = 'chat_flex res_msg';
+      const innerHTML = `<div style="color: black; padding: 0.5rem 1rem; background-color: rgba(229,231,235,1); border-radius: 0.5rem; text-align: start; display: block;">${message}</div><div class="blink"></div>`;
+      replyElement.innerHTML = innerHTML;
+      chatMessages.appendChild(replyElement);
+      MESSAGE_IDS.push(id);
+    } else {
+      const replyElement = document.getElementById(id);
+      const innerMsg = replyElement.firstChild;
+      innerMsg.innerHTML = innerMsg.innerHTML + message;
+    }
+    
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  function send(message) {
-    buttonSwitch(true);
-
+  async function send(message) {
     const userMsg = {
       role: "user",
       content: message
     };
     REQUEST_PAYLOAD.messages.push(userMsg);
 
-    axios({
-      method: 'post',
-      url: window.chatServer || "https://chat-server-gray.vercel.app/api/completion",
-      data: REQUEST_PAYLOAD,
-    }).then(function(response) {
-      REQUEST_PAYLOAD.messages.push(response.data.choices[0].message);
-      reply(response.data.choices[0].message.content);
-    }).catch(function() {
-      REQUEST_PAYLOAD.messages.pop();
-      reply("Error. Retry later.")
-    })
-    .finally(function() { buttonSwitch(false) });
+    const msgId = `msg_${Date.now()}`;
+    reply("", msgId);
+    try {
+      const response = await fetch(window.chatServer || "https://next-chat-server-ten.vercel.app/api/chat", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify(REQUEST_PAYLOAD),
+      });
+      buttonSwitch(true);
+      async function streamToString(body) {
+          const reader = body?.pipeThrough(new TextDecoderStream()).getReader();
+          
+          let chatMessage = "";
+          while (reader) {
+              let stream = await reader.read();
+              if (stream.done) {
+                REQUEST_PAYLOAD.messages.push({
+                  "role": "assistant",
+                  "content": chatMessage
+                });
+                buttonSwitch(false);
+                break;
+              }
+              chatMessage += stream.value;
+              reply(stream.value, msgId);
+          }
+      }
+      streamToString(response.body);
+  } catch (err) {
+    reply("Error. Retry later.", msgId)
+    buttonSwitch(false)
   }
+}
 
 
   function buttonSwitch(status) {
     loading = status
+    
     if (loading) {
       buttonText.style.display = "none";
       loadingIcon.style.display = "inline";
+      chatSubmit.style.background = "#a9a9a9";
     } else {
+      const blinks = document.getElementsByClassName('blink');
+      blinks[blinks.length - 1].style.display = "none";
       buttonText.style.display = "inline-block";
       loadingIcon.style.display = "none";
+      chatSubmit.style.background = "#20bec8";
     }
   }
 
